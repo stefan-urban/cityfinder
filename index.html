@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CityFinder</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <svg id="map" data-i18n-aria="map.label"></svg>
+
+    <!-- In-game HUD -->
+    <header id="hud" class="hidden">
+      <div class="brand">City<span>Finder</span></div>
+      <div class="prompt-card">
+        <div class="prompt-label"></div>
+        <div class="prompt-city"><span id="target-name">—</span><span id="target-country"></span></div>
+        <div class="timer" id="timer"><div class="timer-fill" id="timer-fill"></div></div>
+      </div>
+      <div class="stats">
+        <div><span class="stat-label" data-i18n="hud.round"></span><span id="round-label">1 / 10</span></div>
+        <div><span class="stat-label" data-i18n="hud.score"></span><span id="score-label">0</span></div>
+        <button class="ghost small" id="quit-btn" data-i18n="hud.quit" data-i18n-title="hud.quitTitle"></button>
+      </div>
+    </header>
+
+    <!-- Bottom action area -->
+    <div id="action-bar" class="hidden">
+      <div id="hint" class="hint"></div>
+      <div id="result" class="result hidden">
+        <div class="result-distance" id="result-distance"></div>
+        <div class="result-time" id="result-time"></div>
+        <div class="result-points" id="result-points"></div>
+      </div>
+      <button id="confirm-btn" class="primary" data-i18n="game.confirm" disabled></button>
+      <button id="next-btn" class="primary hidden"></button>
+    </div>
+
+    <div id="zoom-controls">
+      <button id="zoom-in" data-i18n-title="zoom.in">+</button>
+      <button id="zoom-out" data-i18n-title="zoom.out">−</button>
+      <button id="zoom-reset" data-i18n-title="zoom.reset">⟲</button>
+    </div>
+
+    <!-- Setup screen -->
+    <div id="setup" class="overlay">
+      <div class="panel">
+        <!-- Main menu -->
+        <div id="main-menu" class="main-menu">
+          <h1>City<span>Finder</span></h1>
+          <p class="tagline" data-i18n="app.tagline"></p>
+          <button id="start-btn" class="play-btn"><span class="play-icon">▶</span><span data-i18n="menu.play"></span></button>
+          <div class="settings-summary" id="settings-summary"></div>
+          <button id="options-btn" class="ghost options-btn" data-i18n="menu.options"></button>
+          <div class="best" id="best-label"></div>
+        </div>
+
+        <!-- Options submenu -->
+        <div id="options-menu" class="hidden">
+          <div class="submenu-header">
+            <button id="options-back" class="ghost small" data-i18n-title="options.back">←</button>
+            <h2 data-i18n="options.title"></h2>
+          </div>
+
+          <div class="field">
+            <div class="field-label" data-i18n="options.cities"></div>
+            <div class="segmented" data-setting="pool">
+              <button data-value="capitals" data-i18n="pool.capitals"></button>
+              <button data-value="large" data-i18n="pool.large"></button>
+              <button data-value="mixed" data-i18n="pool.mixed"></button>
+            </div>
+            <div class="field-note" id="pool-note"></div>
+          </div>
+
+          <div class="field">
+            <div class="field-label" data-i18n="options.rounds"></div>
+            <div class="segmented" data-setting="rounds">
+              <button data-value="5">5</button>
+              <button data-value="10">10</button>
+              <button data-value="15">15</button>
+              <button data-value="20">20</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label" data-i18n="options.timer"></div>
+            <div class="segmented" data-setting="timer">
+              <button data-value="15">15 s</button>
+              <button data-value="30">30 s</button>
+              <button data-value="60">60 s</button>
+              <button data-value="0" data-i18n="options.noLimit"></button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label" data-i18n="options.language"></div>
+            <div class="segmented" data-setting="lang">
+              <button data-value="en">English</button>
+              <button data-value="de">Deutsch</button>
+            </div>
+          </div>
+
+          <label class="toggle">
+            <input type="checkbox" id="show-country">
+            <span data-i18n="options.showCountry"></span>
+          </label>
+
+          <p class="rules" data-i18n="options.rules"></p>
+          <button id="options-done" class="primary big" data-i18n="options.done"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary screen -->
+    <div id="summary" class="overlay hidden">
+      <div class="panel wide">
+        <h2 data-i18n="end.title"></h2>
+        <div class="summary-total"><span id="summary-score">0</span><small> / <span id="summary-max">0</span></small></div>
+        <div class="summary-best" id="summary-best"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>#</th>
+              <th data-i18n="end.city"></th>
+              <th class="num" data-i18n="end.distance"></th>
+              <th class="num" data-i18n="end.time"></th>
+              <th class="num" data-i18n="end.points"></th>
+            </tr></thead>
+            <tbody id="summary-rows"></tbody>
+          </table>
+        </div>
+        <div class="buttons">
+          <button id="again-btn" class="primary" data-i18n="end.again"></button>
+          <button id="menu-btn" class="ghost" data-i18n="end.menu"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/d3.min.js"></script>
+  <script src="vendor/topojson-client.min.js"></script>
+  <script src="data/world.js"></script>
+  <script src="data/cities.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/scoring.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

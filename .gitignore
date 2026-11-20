@@ -1,0 +1,13 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local tooling
+node_modules/
+.claude/settings.local.json
+
+# Raw source downloads for tools/build-data.mjs (large; see README)
+*.geojson
+countries-50m.json
