@@ -70,3 +70,12 @@ Sources (public domain):
 The script's `LARGE_CITY_MIN_POP` controls which non-capital cities are included, and `MAX_PER_COUNTRY` sets the per-country limit. German country names come from `Intl.DisplayNames`, with a few manual overrides in the script.
 
 To add another language, add a block to `STRINGS` in `js/i18n.js`, add a button in the Language option in `index.html`, and add the localized city and country names in the build script.
+
+## License
+
+The game code is released under the [MIT License](LICENSE).
+
+Bundled third-party components keep their own licenses:
+- [D3](https://github.com/d3/d3) 7.9.0 (`vendor/d3.min.js`): ISC License
+- [topojson-client](https://github.com/topojson/topojson-client) 3.1.0 (`vendor/topojson-client.min.js`): ISC License
+- City and country data from [Natural Earth](https://www.naturalearthdata.com/) via [world-atlas](https://github.com/topojson/world-atlas) (`data/`): public domain
